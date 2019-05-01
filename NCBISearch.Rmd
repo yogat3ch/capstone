@@ -1,0 +1,176 @@
+---
+title: "Capstone - Self Compassion Meta Analysis"
+author: "Stephen Synchronicity"
+date: '`r format(Sys.time(), "%Y-%m-%d")`'
+always_allow_html: yes
+header-includes:
+   - \usepackage{dcolumn}
+output: 
+  html_document: 
+    self_contained: yes
+    css: C:\Users\Administrator\Documents\R\win-library\3.5\neuhwk\rmarkdown\templates\DA5030\resources\bootstrap.min.css
+    highlight: zenburn
+    keep_md: no
+    theme: spacelab
+    toc: TRUE
+    toc_float: TRUE
+    df_print: paged
+    code_folding: hide
+---
+```{r setup, include=FALSE}
+# Knitr Options
+knitr::opts_chunk$set(echo = TRUE, message=FALSE,warning=FALSE,cache=TRUE, fig.align='center', fig.height=5.625, fig.width=7.5, tidy=TRUE, tidy.opts=list(width.cutoff=80))
+options(scipen=12)
+# Make reproducible
+set.seed(1)
+# Load packages
+HDA::startPkgs(c("tidyverse","htmltools","magrittr","rentrez","printr"))
+# # Attach dependencies
+# rmarkdown::html_dependency_jquery()
+# rmarkdown::html_dependency_bootstrap("spacelab")
+# rmarkdown::html_dependency_jqueryui()
+# # Use Chunk Titles to add Bold Headings to Chunks
+# source("~/R/Scripts/addChunkTitles.R")
+# rmd <- addChunkTitles(rstudioapi::getSourceEditorContext()$path)
+# write(rmd,file=(rstudioapi::getSourceEditorContext()$path))
+# # Stargazer HTML to Latex
+# source("~/R/Scripts/stargazer.R")
+# rmd <- addStargazer(rstudioapi::getSourceEditorContext()$path)
+# write(rmd,file=(rstudioapi::getSourceEditorContext()$path))
+```
+
+[Meta Analysis Guide](https://peerj.com/preprints/2978.pdf)
+<strong class='chunktitle'>Scrape Pubtypes</strong>
+```{r 'Scrape_Pubtypes'}
+htm <- xml2::read_html("https://www.nlm.nih.gov/mesh/pubtypes.html")
+ptyps <- data.frame(Name = htm %>% rvest::html_nodes("dt") %>% rvest::html_text(),Desc = htm %>% rvest::html_nodes("dd") %>% rvest::html_text(),stringsAsFactors = F)
+tags$p("Types used in Query")
+ptyps[c(3,5,33:38,43,47,66,100,106,124,134,136:141,145,160),] %>% as.data.frame %>% DT::datatable()
+```
+
+```{r 'Google Scholar Query'}
+paste(paste(c("mindfulness", "meditation"), collapse = " OR "), paste(c("education","elementary","student","grade","grader","middle School","high school","undergraduate","university","graduate","pedagogy","college","academic", "academia", "educational"), collapse = " OR "), paste(c("self-compassion scale", "self compassion scale"), collapse = " OR "), sep = " AND ")
+```
+
+
+<strong class='chunktitle'>Create Query and Search Pubmed</strong>
+```{r 'Create_Query_and_Search_Pubmed'}
+#https://ropensci.org/tutorials/rentrez_tutorial/
+library(rentrez)
+p_types <- paste(ptyps[c(3,5,33:38,43,47,66,100,106,124,134,136:141,145,160),1],"[PTYP]",sep="") %>% paste(collapse = " OR ")
+educ <- paste(c("education","elementary","student","grade","grader","middle School","high school","undergraduate","university","graduate","pedagogy","college","academic", "academia", "educational"),"[TIAB]",sep = "") %>% paste(collapse = " OR ")
+qnot <- paste(c("HIV","Cancer","cancer"),sep="") %>% paste(collapse = " OR ")
+outcome <- paste(c("Self Compassion Scale","Self-compassion scale","SCS","Compassion scale","Neff"),"[TIAB]",sep = "") %>% paste(collapse = " OR ")
+tags$p("Query:")
+(query1 <- paste0("mindfulness[TIAB] OR meditation[TIAB] OR meditation[MESH] AND ","(",educ,")"," AND ","2000:2018[EDAT]"," AND ","(",p_types,")"," AND ","(",outcome,")"," NOT ","(",qnot,")"))
+(query2 <- paste0("mindfulness[TIAB] OR meditation[TIAB] OR meditation[MESH] AND ","(",educ,")"," AND ","2000:2018[EDAT]"," AND ","(",outcome,")"," NOT ","(",qnot,")"))
+(ids <-  entrez_search(db = "pubmed", term=query2, sort="relevance", retmax = 1000, use_history = T))
+```
+```{r 'Extract info from Pubmed Query Result'}
+summary_records <- list()
+for (seq_start in seq(0,round(length(ids$ids),1),50)) {
+recs <-  entrez_summary(db = "pubmed", web_history = ids$web_history, retmax = 50, retstart = seq_start)
+summary_records <- append(recs, summary_records)
+}
+```
+<strong class='chunktitle'>Extract Titles and remove stopwords</strong>
+```{r 'Extract_Titles_and_remove_stopwords'}
+tags$h3("All Titles")
+lapply(summary_records,FUN = extract_from_esummary,c("title")) %>% do.call("rbind",.) %>% as.data.frame %>% DT::datatable()
+pub_titles <- lapply(summary_records,FUN = extract_from_esummary,c("title")) %>% lapply(function(.)strsplit(.,"\\s{1,}"))
+pub_tm <- textmineR::CreateDtm(pub_titles)
+tags$h3("Term Frequency:")
+textmineR::TermDocFreq(pub_tm) %>% arrange(desc(term_freq)) %>% DT::datatable()
+pub_dtm <- pub_tm %>% textmineR::Dtm2Docs()
+```
+
+<strong class='chunktitle'>Find titles with Cognitive and Students</strong>
+```{r 'Find_titles_with_Cognitive',eval=F}
+tags$p("It looks like cognitive and students appear frequently, these are the studies with cognitive in the title:")
+(pub_tchar <- lapply(summary_records,FUN = extract_from_esummary,c("title"))) %>% .[str_detect(.,"cognitive")] %>% do.call("rbind",.) %>% as.data.frame %>% DT::datatable()
+```
+
+<strong class='chunktitle'>And Students</strong>
+```{r 'And_Students',eval=F}
+tags$p("And with students in the title:")
+pub_tchar %>% .[str_detect(.,"students")] %>% do.call("rbind",.) %>% as.data.frame %>% assign("pub.tchar.stu_df",.,envir = .GlobalEnv) %>% DT::datatable()
+```
+```{r 'Students & Cognitive',eval=F}
+tags$p("with students & cognitive in the title:")
+pub_tchar %>% .[str_detect(.,"students&cognitive")] %>% do.call("rbind",.) %>% as.data.frame %>% DT::datatable()
+```
+
+```{r 'Full Text through API'}
+readLines("APIKey.txt") %>% set_entrez_key()
+pub.tchar_l <- lapply(names(summary_records),function(id){
+  entrez_fetch("pubmed",id =id, rettype = "xml", parsed=T)
+})
+
+pub.tchar.abs <- lapply(pub.tchar_l,function(l){
+out <- c(unlist(l %>% XML::getNodeSet(path = "//AbstractText") %>% lapply(XML::xmlValue)))
+#names(out) <- c("ID",XML::xmlParse(path) %>% XML::getNodeSet(path = "//AbstractText") %>% lapply(XML::xmlAttrs) %>% lapply(`[`,1) %>% unlist)
+return(out)
+},use.names=T)
+names(pub.tchar.abs) <- sapply(pub.tchar_l,function(l){path <-
+unlist(l %>% XML::getNodeSet(path = "//PMID") %>% lapply(XML::xmlValue)) %>% .[[1]]})
+Acronyms <- lapply(pub.tchar.abs,function(l){str_extract_all(l,"[A-Z]{2,}") %>% unlist %>% table %>% names}) %>% unlist %>% table() %>% sort(decreasing = T)
+study_search <- sapply(c("(?=[Ff]ive [Ff]acet [Mm]indfulness)|FFMQ","SMD","(?=Beck Depression)|BDI","MAAS|(?=[Mm]indfulness [Aa]ttention)"),pub = pub.tchar.abs,function(x,pub){
+  str_detect(pub,x)
+})
+study_search <- sapply(c("[Dd]epression","[Aa]nxiety","[Ss]tress(?<!\\s[Rr]eduction)"),pub = pub.tchar.abs,function(x,pub){
+  str_detect(pub,paste0(x,".*[Ss]tudents"))
+})
+study_search <- sapply(c("[Bb]lood.{1,2}[Pp]ressure"),pub = pub.tchar.abs,function(x,pub){
+  str_detect(pub,paste0(x,".*[Ss]tudents"))
+})
+study_search <- sapply(c("[Ww]ell.{1,3}[Bb]eing|SWB"),pub = pub.tchar.abs,function(x,pub){
+  str_detect(pub,paste0(x,".*[Ss]tudents"))
+})
+study_search %>% colSums()
+pub.tchar.abs[study_search[,"[Ww]ell.{1,3}[Bb]eing|SWB"] %>% which]
+#30300732 Meta-analysis looking at CMHPs (common mental health problems)
+
+Studies <- read.csv("CAEP Final Project Ideas.csv")
+gsFP <- googlesheets::gs_url("https://docs.google.com/spreadsheets/d/1dq_9WL8PY3B8EGei3GdlKwxPfD1KlcegmC0QVfI70cI/edit#gid=2067448748")
+googlesheets::gs_edit_cells(gsFP,ws="FP",input = Studies)
+```
+
+
+
+<strong class='chunktitle'>Using arules to determine associated subjects</strong>
+```{r 'arules_to_determine_associated_subjects'}
+library(arules)
+pub_dtm %<>% gsub("(?:[Mm]indfulness.{1,3}[Bb]ased.{1,3}[Ss]tress.{1,3}[Rr]eduction)|[Mm]indfulness|[Ss]tress|[Rr]eduction|[Aa]nalysis|[Ss]ystematic|[Rr]eview|(?:[Ss]tress.{1,3}[Rr]eduction)|(?:[Rr]andomized.{1,3}[Cc]ontrolled.{1,3}[Tt]rial)|[Rr]andomized|[Cc]ontrolled","",.)
+pub_items <- as(lapply(pub_dtm,function(.)strsplit(.,"\\s{1,}") %>% unlist) %>% lapply(function(.){.[-c(1,length(.))]}),"transactions")
+
+pub_apriori <- apriori(pub_items,parameter = list(support = .01))
+(pub_apriori_df <- DATAFRAME(pub_apriori) %>% as.data.frame() %>% arrange(desc(support))) 
+
+
+```
+
+```{r 'Self-Compassion Scale search'}
+readLines("APIKey.txt") %>% set_entrez_key()
+pub.tchar_l <- lapply(names(summary_records),function(id){
+  entrez_fetch("pubmed",id =id, rettype = "xml", parsed=T)
+})
+pub.tchar_l[[1]]
+pub.tchar.abs <- lapply(pub.tchar_l,function(l){
+# GEt abstract text
+out <- c(unlist(l %>% XML::getNodeSet(path = "//AbstractText") %>% lapply(XML::xmlValue)))
+#names(out) <- c("ID",XML::xmlParse(path) %>% XML::getNodeSet(path = "//AbstractText") %>% lapply(XML::xmlAttrs) %>% lapply(`[`,1) %>% unlist)
+  return(out)
+})
+pub.tchar.doi <- lapply(pub.tchar_l,function(l){
+  
+  # Get DOI
+out <- c(unlist(l %>% XML::getNodeSet(path = "//ArticleId[@IdType = 'doi']") %>% lapply(XML::xmlValue)))
+return(out)
+})
+names(pub.tchar.abs) <- sapply(pub.tchar_l,function(l){path <-
+unlist(l %>% XML::getNodeSet(path = "//PMID") %>% lapply(XML::xmlValue)) %>% .[[1]]})
+do.call("rbind",pub.tchar.abs) %>% View
+pub.tchar_l %>% View
+
+data.frame(DOI = matrix(pub.tchar.doi,ncol=1)) %>% tidyr::unnest()
+```

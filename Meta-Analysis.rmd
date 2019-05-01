@@ -1,0 +1,316 @@
+---
+title: "Meta-Analysis"
+author: "Stephen Synchronicity"
+date: '`r format(Sys.time(), "%Y-%m-%d")`'
+always_allow_html: yes
+geometry: margin=.5cm
+header-includes:
+- \usepackage{dcolumn}
+- \usepackage{booktabs}
+- \usepackage{makecell}
+- \usepackage{amsmath}
+output: 
+  pdf_document: 
+    toc: no
+    number_sections: true
+    df_print: kable
+---
+
+```{r setup, include=FALSE}
+# Knitr Options
+knitr::opts_chunk$set(echo = TRUE, message=FALSE,warning=FALSE,cache=TRUE, fig.align='center', fig.height=5, fig.width=7.5, tidy=TRUE, tidy.opts=list(width.cutoff=80))
+options(scipen=12)
+# Make reproducible
+set.seed(1)
+# Load packages
+HDA::startPkgs(c("tidyverse","htmltools","magrittr"))
+# # Attach dependencies
+# rmarkdown::html_dependency_jquery()
+# rmarkdown::html_dependency_bootstrap("spacelab")
+# rmarkdown::html_dependency_jqueryui()
+# # Use Chunk Titles to add Bold Headings to Chunks
+# source("~/R/Scripts/addChunkTitles.R")
+# rmd <- addChunkTitles(rstudioapi::getSourceEditorContext()$path)
+# write(rmd,file=(rstudioapi::getSourceEditorContext()$path))
+# # HTML to Latex
+# source("~/R/Scripts/HTMLtoLatex.R")
+# rmd <- HTMLtoLatex(rstudioapi::getSourceEditorContext()$path)
+# write(rmd,file=(rstudioapi::getSourceEditorContext()$path))
+extrafont::loadfonts()
+```
+
+```{r 'Get Study Table'}
+googlesheets::gs_auth(token = "~//R//husky_googlesheets_token.rds")
+gsRes <- googlesheets::gs_url("https://docs.google.com/spreadsheets/d/1dq_9WL8PY3B8EGei3GdlKwxPfD1KlcegmC0QVfI70cI/edit#gid=942728485")
+Results <- googlesheets::gs_read(gsRes,ws="FP Screen 2 SCS")
+```
+```{r 'Clean Results Table', eval = F}
+Results %<>% filter(complete.cases(`Intervention`))
+# Remove studies that did not meet filtering criterion
+Results <- Results[Results$Citation %>% grepl("Barbosa|Carvalho|Neff", . ) %>% not,]
+#Results %>% googlesheets::gs_edit_cells(gsRes,ws = "Results Table",input = .,col_names = T)
+```
+
+# Equations
+## Cohen's d
+<strong>Across groups design</strong>
+$$d_{s} = \frac{\mu_t-\mu_c}{\sqrt{\frac{(n_t-1)S_t^2+(n_c-1)S_c^2}{n_t+n_c-2}}}$$
+<strong>Within subjects design</strong>
+$$d = \frac{\mu_1-\mu_2}{\sigma}$$
+
+
+$$t = \frac{\mu_t-\mu_c}{\sqrt{\frac{S_t^2}{n_t}+\frac{S_c^2}{n_c}}}$$
+## Within group Formulas 
+### Cohen's D Effect size (Pre/Post Treatment)
+Morris, S. B. (2008). Estimating Effect Sizes From Pretest-Posttest-Control Group Designs. Organizational Research Methods, 11(2), 364–386. https://doi.org/10.1177/1094428106291059
+
+```{r 'Effect Size Calculation'}
+# ----------------------- Thu Apr 04 17:24:47 2019 ------------------------#
+# Source: (Morris & DeShon, 2002)
+
+es <- function(SDe.base, SDe.final, Me.base, Me.final, r) {
+  ## ----------------------- Thu Apr 04 18:51:29 2019 ------------------------# Standard Deviation of the Mean Change Score
+#https://handbook-5-1.cochrane.org/chapter_16/16_1_3_2_imputing_standard_deviations_for_changes_from_baseline.htm
+ SDe.change <- sqrt(SDe.base^2 + SDe.final^2 - (2 * r * SDe.base * SDe.final))
+d <- abs(Me.final - Me.base) / SDe.change
+  return(d)
+}
+```
+### SD and Confidence Interval
+[Alternatives to P value: confidence interval and effect size](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5133225/)
+<em>Includes calculation of effect size confidence interval, since only effect size without confidence interval is reported.</em>
+$$\sigma_d=\sqrt{\frac{N_1+N_2}{N_1*N_2}+\frac{d^2}{2(N_1+N_2)}} \\ CI = d \pm 1.96\sigma_d \text{ for }\alpha = .05$$
+```{r 'SD Calculation'}
+# ----------------------- Fri Apr 19 16:16:54 2019 ------------------------#
+# SD & Confidence Interval Function
+dCI <- function(n1, n2, d, a = .05) {
+  sigma_d <- sqrt((n1 + n2)/(n1 * n2) + d ^ 2 / (2 * (n1 + n2)))
+  z <- abs(qnorm(a / 2))
+  return(c(cilb = {d - z * sigma_d}, ciub = d + z * sigma_d))
+}
+
+```
+
+# Studies
+## (Bergen-Cico, Possemato, & Cheon, 2013)
+### Control - Treatment Comparison
+
+```{r 'BergenCico Numbers'}
+Expanded <- list()
+Expanded$CT$`Bergen-Cico`$N <- Expanded$TT$`Bergen-Cico`$N <- c(nt = 72, nc = 47)
+```
+
+```{r 'BergenCico Between Group'}
+pre_test <- list(mt = 84,mc = 83,st=17,sc=12,nt = 72,nc = 47)
+pre_tStat <- with(pre_test,{d <- (mt-mc)/((st + sc)/2)
+out <- d*sqrt((nt*nc)/(nt+nc))})
+Bergen_res <- list(mt = 89,mc = 81,st=16,sc=12,nt = 72,nc = 47)
+post_tStat <- with(Bergen_res,{
+ t <- (mt-mc)/sqrt(st^2/nt+sc^2/nc) 
+})
+# Effect size of difference between treament and control
+BergenCT_tes <- compute.es::tes(post_tStat,Bergen_res$nt,Bergen_res$nc,verbose=F)
+Expanded$CT$`Bergen-Cico`$d <- BergenCT_tes$d
+Expanded$CT$`Bergen-Cico`$CI <- c(cilb = BergenCT_tes$l.d,ciub =BergenCT_tes$u.d)
+```
+
+### Treatment - Treatment Comparison
+```{r 'BergenCico Within Group'}
+Expanded$TT$`Bergen-Cico` <- list(SDe.base = 17, SDe.final = 16, Me.base = 84, Me.final = 89, r = 0.9720782307)
+(Expanded$TT$`Bergen-Cico`$d <- do.call("es",Expanded$TT$`Bergen-Cico`))
+(Expanded$TT$`Bergen-Cico`$CI <- dCI(n1 = 72, n2 = 72, Expanded$TT$`Bergen-Cico`$d))
+```
+
+
+## (Dundas, Binder, Hansen, & Stige, 2017)
+### Control - Treatment Comparison
+```{r 'Dundas CT'}
+Expanded$CT$Dundas$N <- Expanded$TT$Dundas$N <- c(nt = 53,nc = 64)
+# Reported
+Expanded$CT$Dundas$d <- .94
+Expanded$CT$Dundas$CI <- c(cilb = .66,
+ciub = 1.23)
+Expanded$CT$Dundas$a <- .05 #Alpha level
+```
+
+#### Treatment - Treatment Comparison
+```{r 'Load Dundas PrePost', eval = F}
+(Dundas <- utils::readClipboard() %>% .[!nchar(.) < 1] %>% matrix(nrow = 7, byrow = T) %>% as.data.frame %>% setNames(c("Pair", "Desc", "N","r","sig")) %>% mutate_at(vars(r),funs(gsub, .args = list(pattern = "\\,", replacement = "."))) %>% mutate_at(vars(r,N), funs(as.numeric(as.character(.))))  %>% write.csv(file = "DundasCorrelations.csv"))
+```
+```{r 'Load Dundas PrePost from CSV'}
+Dundas <- read.csv("DundasCorrelations.csv")
+```
+
+```{r 'Dundas eff size and CI'} 
+(Expanded$TT$Dundas$d <- es(SDe.base = .62, Me.base = 2.8, SDe.final = .57, Me.final = 3.35, r = Dundas[1, "r", drop = T]))
+(Expanded$TT$Dundas$CI <- dCI(n1 = 53, n2 = 53, d = Expanded$TT$Dundas$d))
+```
+
+### (Erogul, Singer, McIntyre, & Stefanov, 2014)
+#### Control - Treatment Comparison
+```{r 'Erogul CT'}
+Expanded$CT$Erogul$N <- c(nt = 29,nc = 28)
+# Reported
+Expanded$CT$Erogul$d <- .58
+Expanded$CT$Erogul$CI <- c(cilb = .23,
+                 ciub = .92)
+Expanded$CT$Erogul$a <- .05
+```
+
+
+### (Mathad, 2017)
+#### Treatment - Treatment Comparison
+```{r 'Mathad'}
+Expanded$TT$Mathad$N <- c(nt = 40)
+Expanded$TT$Mathad$r <- .497
+(Expanded$TT$Mathad$d <- es(SDe.base = 0.46, Me.base = 3.03, SDe.final = 0.28, Me.final = 3.19, r = Expanded$TT$Mathad$r))
+(Expanded$TT$Mathad$CI <- dCI(n1 = 40, n2 = 40, d = Expanded$TT$Mathad$d))
+```
+
+### (Smeets, Neff, Alberts, & Peters, 2014)
+#### Control - Treatment Comparison
+```{r 'Smeets CT'}
+Expanded$CT$Smeets$N <- c(nc = 25, nt = 27)
+Expanded$CT$Smeets$d <- 1.19
+(Expanded$CT$Smeets$CI <- dCI(n1 = 25, n2 = 27, d = 1.19))
+Expanded$CT$Smeets$a <- .05
+```
+# Multilevel Models
+## Hedges Correction
+[EFFECT SIZE EQUATIONS](https://www.polyu.edu.hk/mm/effectsizefaqs/effect_size_equations2.html)
+Hedges and Olkin (1985, p.81)
+$$g = d(1-\frac{3}{4(n_t+n_c)-9})$$
+## Standard Errors from Confidence Intervals
+[Cochrane Handbook for Systematic Reviews of Interventions](https://handbook-5-1.cochrane.org/chapter_7/7_7_7_2_obtaining_standard_errors_from_confidence_intervals_and.htm)
+If a 95% confidence interval is available for an absolute measure of intervention effect (e.g. SMD, risk difference, rate difference), then the standard error can be calculated as
+$$SE = (\text{upper limit} – \text{lower limit}) / 3.92$$
+
+For 90% confidence intervals divide by 3.29 rather than 3.92; for 99% confidence intervals divide by 5.15.
+```{r 'Hedges Correction and Standard Error from CI'}
+Studies <- purrr::map(.x = Expanded,.f = function(.x){
+  type <- purrr::map(.x = .x, .f = function(.x){
+    #Hedges g correction from the Cohen's d
+    N <- purrr::pluck(.x, c("N"))
+    nt <- N[["nt"]]
+    nc <- try({N[["nc"]]}, silent = T)
+    print(nc)
+    nc <- ifelse(!stringr::str_detect(nc,"Error"), nc, nt)
+    d <- purrr::pluck(.x, c("d"))
+    .x$g <- d * (1 - 3 / (4 * (nt + nc) - 9)) 
+    # Standard Error from CI
+    CI <- purrr::pluck(.x, c("CI"))
+    .x$se <- (CI[["ciub"]] - CI[["cilb"]]) / 3.92 # If alpha is .05
+    return(.x)
+  })
+return(type)
+})
+```
+
+
+```{r 'Get Results Table', results = 'asis'}
+googlesheets::gs_auth(token = "~//R//husky_googlesheets_token.rds")
+gsRes %<>% .[["sheet_key"]] %>% googlesheets::gs_key()
+Res_tbl <- gsRes %>% googlesheets::gs_read(.,ws = "CT Table",trim_ws=T,col_names=T)
+(rma_mods <- Res_tbl %>% names %>% .[c(5,6,7,8)])
+Res_tbl %<>% mutate_at(vars(rma_mods[4]),as.factor)
+```
+
+#  RMA Model
+## Control-Treatment Random-Effects Model
+### The Hunter-Schmidt Estimator
+Schmidt, F. L., Oh, I.-S., & Hayes, T. L. (2009). Fixed- versus random-effects models in meta-analysis: Model properties and an empirical comparison of differences in results. British Journal of Mathematical and Statistical Psychology, 62(1), 97–128. https://doi.org/10.1348/000711007X255327
+
+```{r 'Build RMA model for Control Treatment'}
+library(metafor)
+# Sort Studies Alphabetically
+Studies$CT %<>% .[sort(Studies$CT %>% names)]
+# General model - no moderators
+(Studies$Results$CT$General <- metafor::rma(yi = sapply(Studies$CT,`[[`,"g"),sei = sapply(Studies$CT,`[[`,"se"), method = "HS", weighted = F, slab = names(Studies$CT), main = "Test")) %>% summary
+# Intervention Type as moderators
+(Studies$Results$CT$Type <- metafor::rma(yi = sapply(Studies$CT,`[[`,"g"),sei = sapply(Studies$CT,`[[`,"se"), method = "HS", weighted = F, mods = ~ `Int Type`, data = Res_tbl, slab = paste(names(Studies$CT), Res_tbl$`Int Type`,sep = ","))) %>% summary
+# Contact & Individual Time as moderators
+(Studies$Results$CT$Time <- metafor::rma(yi = sapply(Studies$CT,`[[`,"g"),sei = sapply(Studies$CT,`[[`,"se"),method = "HS", weighted = F,mods = paste0("~ `", rma_mods[1], "` + `",rma_mods[2],"`") %>% as.formula, data = Res_tbl, slab = paste0(names(Studies$CT)," CT:", Res_tbl$`Contact Time (Min)`,"m,"," IT:",Res_tbl$`Ind Time (Min)`,"m"))) %>% summary
+Studies$Results$CT$Time$order <- Res_tbl %>% rownames_to_column() %>% arrange(Res_tbl$`Contact Time (Min)`) %>% .[,"rowname", drop = T] %>% as.numeric
+# Duration (Wks) as moderator
+(Studies$Results$CT$Duration <- metafor::rma(yi = sapply(Studies$CT,`[[`,"g"),sei = sapply(Studies$CT,`[[`,"se"), method = "HS", order = o, weighted = F, mods = paste0("~ `", rma_mods[3], "`") %>% as.formula, data = Res_tbl, slab = paste(names(Studies$CT), Res_tbl$`Duration (Wks)`,"Wks",sep = ",")))
+Studies$Results$CT$Duration$order <- Res_tbl %>% rownames_to_column() %>% arrange(Res_tbl$`Duration (Wks)`) %>% .[,"rowname", drop = T] %>% as.numeric
+Res_tbl[ ,12:13] %>% colSums() %>% Reduce(f=`+`,x=.)
+```
+
+
+### Moderator Effects
+```{r 'Moderators', results = 'asis'}
+purrr::map2(.x = Studies$Results$CT, .y = c("General", "Moderator: Intervention Type", "Moderator: Contact Time & Individual Time", "Moderator: Duration in Weeks"), .f = function(.x, .y){
+  tags$strong(.y)
+  # Forest Plot
+  if(!is.null(.x[["order"]])) o <- .x[["order"]] else  o <- "obs"
+  grDevices::pdf(paste0(gsub("\\:","",.y) %>% gsub("^","CT",.),".pdf"), family="Merriweather", width=16/2, height=9/2)
+metafor::forest(.x,order = o, steps = 5, mlab = "Hunter-Schmidt RE Estimator", main = "Control-Treatment Hunter-Schmidt Random Effects Model")
+dev.off()
+  # Table
+  .x %>% capture.output %>% gsub("$", " \n", .) %>% cat %>% kableExtra::kable("latex",booktabs = T) %>% kableExtra::kable_styling(position = "center")
+  as.data.frame(.x$beta) %>% cbind(.x$se, .x$zval, .x$pval %>% HDA::p.txt(), .x$ci.lb, .x$ci.ub) %>% rownames_to_column() %>% setNames(c("Moderator", "Beta", "St.Err", "Z Value","P Value", "CI lower", "CI upper")) %>%  mutate_at(vars(c(-1,-5)), funs(round(.,3))) %>% kableExtra::kable("latex",booktabs = T) %>% kableExtra::kable_styling(position = "center")
+})
+```
+
+
+## Treatment-Treatment (Pre/Post) Random-Effects Model
+```{r 'Get Results TT Table'}
+googlesheets::gs_auth(token = "~//R//husky_googlesheets_token.rds")
+gsRes %<>% .[["sheet_key"]] %>% googlesheets::gs_key()
+Res_tbl <- gsRes %>% googlesheets::gs_read(.,ws = "TT Table",trim_ws=T,col_names=T)
+(rma_mods <- Res_tbl %>% names %>% .[c(5,6,7,8)])
+Res_tbl %<>% mutate_at(vars(rma_mods[4]),as.factor)
+```
+
+```{r 'TT RMA Model'}
+Studies$TT %<>% .[sort(Studies$TT %>% names)]
+# General model - no moderators
+(Studies$Results$TT$General <- metafor::rma(yi = sapply(Studies$TT,`[[`,"g"),sei = sapply(Studies$TT,`[[`,"se"), method = "FE", weighted = F, slab = names(Studies$TT), main = "Test")) %>% summary
+# Intervention Type as moderators
+(Studies$Results$TT$Type <- metafor::rma(yi = sapply(Studies$TT,`[[`,"g"),sei = sapply(Studies$TT,`[[`,"se"), method = "FE", weighted = F, mods = ~ `Int Type`, data = Res_tbl, slab = paste(names(Studies$TT), Res_tbl$`Int Type`,sep = ","))) %>% summary
+# Contact & Individual Time as moderators
+(Studies$Results$TT$Time <- metafor::rma(yi = sapply(Studies$TT,`[[`,"g"),sei = sapply(Studies$TT,`[[`,"se"),method = "FE", weighted = F,mods = paste0("~ `", rma_mods[1], "` + `",rma_mods[2],"`") %>% as.formula, data = Res_tbl, slab = paste0(names(Studies$TT), "CT: ", Res_tbl$`Contact Time (Min)`,"m,","IT: ",Res_tbl$`Individual Time (Min)`,"m"))) %>% summary
+Studies$Results$TT$Time$order <- Res_tbl %>% rownames_to_column() %>% arrange(Res_tbl$`Contact Time (Min)`) %>% .[,"rowname", drop = T] %>% as.numeric
+# Duration (Wks) as moderator
+(Studies$Results$TT$Duration <- metafor::rma(yi = sapply(Studies$TT,`[[`,"g"),sei = sapply(Studies$TT,`[[`,"se"), method = "FE", weighted = F, mods = paste0("~ `", rma_mods[3], "`") %>% as.formula, data = Res_tbl, slab = paste(names(Studies$TT), Res_tbl$`Duration (Wks)`,"Wks",sep = ",")))
+Studies$Results$TT$Duration$order <- Res_tbl %>% rownames_to_column() %>% arrange(Res_tbl$`Duration (Wks)`) %>% .[,"rowname", drop = T] %>% as.numeric
+Res_tbl[ ,12:13] %>% colSums() %>% Reduce(f=`+`,x=.)
+```
+
+### Forest Plot
+```{r 'Forest Plot'}
+grDevices::pdf("ForestTT.pdf", family="Merriweather", width=16/2, height=9/2)
+metafor::forest(Studies$Results$TT$General, order = "obs", refline = Studies$Results$TT$General$beta, steps = 5, mlab = "Fixed Effects Estimator", main = "Pre/Post Treatment Fixed Effects Model")
+dev.off()
+```
+ 
+### Moderator Effects
+```{r 'Moderators', results = 'asis'}
+purrr::map2(.x = Studies$Results$TT, .y = c("General", "Moderator: Intervention Type", "Moderator: Contact Time & Individual Time", "Moderator: Duration in Weeks"), .f = function(.x, .y){
+  tags$strong(.y)
+  # Forest Plot
+  if(!is.null(.x[["order"]])) o <- .x[["order"]] else  o <- "obs"
+  grDevices::pdf(paste0(gsub("\\:","",.y) %>% gsub("^","TT",.),".pdf"), family="Merriweather", width=16/2, height=9/2)
+metafor::forest(.x, order = o, steps = 5, mlab = "Fixed Effects Estimator", main = "Pre/Post Treatment Fixed Effects Model")
+dev.off()
+  # Table
+  .x %>% capture.output %>% gsub("$", " \n", .) %>% cat %>% kableExtra::kable("latex",booktabs = T) %>% kableExtra::kable_styling(position = "center")
+  as.data.frame(.x$beta) %>% cbind(.x$se, .x$zval, .x$pval %>% HDA::p.txt(), .x$ci.lb, .x$ci.ub) %>% rownames_to_column() %>% setNames(c("Moderator", "Beta", "St.Err", "Z Value","P Value", "CI lower", "CI upper")) %>%  mutate_at(vars(c(-1,-5)), funs(round(.,3))) %>% kableExtra::kable("html",booktabs = T) %>% kableExtra::kable_styling(position = "center")
+})
+```
+
+```{r 'Extract Results Table',eval=F}
+text <- Res_tbl %>% kableExtra::kable("latex",booktabs = T) %>% kableExtra::kable_styling(position = "center") %>% kableExtra::landscape() %>% capture.output() %>%  kableExtra::kable_as_image(.,filename = "Results_Table.png",keep_pdf = T)
+
+```
+
+
+# Appendix
+
+```{r 'Bond'}
+(bond.ind <- Results$Citation %>% grepl("Bond",.) %>% which)
+bond.vars <- list(N = Results[bond.ind,"Nint", drop = T], d = Results[bond.ind,"dint-post", drop = T])
+bond.vars$sigma_d <- with(bond.vars,{sqrt(2*N/N^2 + d^2/(2*(2*N)))})
+with(bond.vars, {c(d + 1.96 * sigma_d, d - 1.96 * sigma_d)})
+```
