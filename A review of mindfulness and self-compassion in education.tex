@@ -1,0 +1,354 @@
+\documentclass[10pt]{article}
+
+\usepackage{fullpage}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{lineno}
+
+
+
+
+
+\PassOptionsToPackage{hyphens}{url}
+\usepackage[colorlinks = true,
+            linkcolor = blue,
+            urlcolor  = blue,
+            citecolor = blue,
+            anchorcolor = blue]{hyperref}
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\@combinedblfloats{\box\@outputbox}{\unvbox\@outputbox}{}{%
+  \errmessage{\noexpand\@combinedblfloats could not be patched}%
+}%
+\makeatother
+
+
+\usepackage{natbib}
+
+
+
+
+\renewenvironment{abstract}
+  {{\bfseries\noindent{\abstractname}\par\nobreak}\footnotesize}
+  {\bigskip}
+
+\renewenvironment{quote}
+  {\begin{tabular}{|p{13cm}}}
+  {\end{tabular}}
+
+\titlespacing{\section}{0pt}{*3}{*1}
+\titlespacing{\subsection}{0pt}{*2}{*0.5}
+\titlespacing{\subsubsection}{0pt}{*1.5}{0pt}
+
+
+\usepackage{authblk}
+
+
+\usepackage{graphicx}
+\usepackage[space]{grffile}
+\usepackage{latexsym}
+\usepackage{textcomp}
+\usepackage{longtable}
+\usepackage{tabulary}
+\usepackage{booktabs,array,multirow}
+\usepackage{amsfonts,amsmath,amssymb}
+\providecommand\citet{\cite}
+\providecommand\citep{\cite}
+\providecommand\citealt{\cite}
+% You can conditionalize code for latexml or normal latex using this.
+\newif\iflatexml\latexmlfalse
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}%
+
+\AtBeginDocument{\DeclareGraphicsExtensions{.pdf,.PDF,.eps,.EPS,.png,.PNG,.tif,.TIF,.jpg,.JPG,.jpeg,.JPEG}}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[ngerman,polish,english]{babel}
+
+
+
+
+
+
+
+
+\begin{document}
+
+\title{
+\centering
+A Meta-Analysis of the Effect of Mindfulness Training in Education on Self-Compassion}
+
+
+\author[1]{Stephen Holsenbeck}%
+\affil[1]{Northeastern University}%
+\author[1]{Babatunde Aideyan}%
+\author[1]{Mariya Shiyko PhD}%
+
+
+\vspace{-1em}
+
+
+
+  \date{\today}
+
+
+\begingroup
+\let\center\flushleft
+\let\endcenter\endflushleft
+\maketitle
+\endgroup
+
+
+
+
+\colorbox{teal!10}{%
+\begin{minipage}{1\linewidth}%
+\selectlanguage{english}
+\begin{abstract}
+\textbf{Introduction:~}The experience of the academic environment can be
+competitive, stressful, and at times overwhelming for students and
+faculty alike. Self-compassion (defined by~\hyperref[csl:1]{(Neff, Whittaker, \& Karl, 2017)} as
+including self-kindness, common humanity, and mindfulness) has been
+associated with general resourcefulness~\hyperref[csl:2]{(Martin, Kennett, \& Hopewell, 2019)},
+self-regulation~\hyperref[csl:3]{(Dundas, Binder, Hansen, \& Stige, 2017)}, and well-being~\hyperref[csl:4]{(Gunnell, Mosewich, McEwen, Eklund, \& Crocker, 2017)} in
+university students, but mindfulness practices evoking self-compassion
+remain underutilized in academic contexts.~~\textbf{Methods:} This
+meta-analysis evaluates three studies examining self-compassion as
+measured by the Self-Compassion Scale~\hyperref[csl:1]{(Neff, Whittaker, \& Karl, 2017)} as a primary or
+secondary outcome of mindfulness-based interventions conducted in
+educational contexts. The study seeks to establish associations between
+the characteristics of mindfulness-based interventions in educational
+contexts, namely contact time, individual time (outside of the group
+context), type of intervention (Mindfulness-based stress reduction or
+Self-compassion course) and their influence on the~between-group
+(treatment-control) mean standardized differences of scores on the
+Self-compassion scale.~\textbf{Results:} The three included studies show
+standardized mean difference effect sizes between treatment \& control
+groups ranging from .57-.94. Total contact time had a nearly negligible
+though significant~\(\beta=-0.0009,\ p\le.1\)correlation with
+self-compassion~scores suggesting that shorter length courses may be
+equally effective as longer courses in influencing self-compassion
+outcomes. Intervention type,~specifically interventions between 2 \& 8
+weeks modeled after the self-compassion training courses show a large
+significant~effect~\(\beta = 0.35,\ p\leq.1\) on self-compassion outcome
+measures.
+
+\textbf{Conclusion:~} Two to~eight-week mindfulness courses embedded
+within coursework can have a significant effect on self-compassion
+scores for student cohorts.%
+\end{abstract}%
+\end{minipage}%
+}
+
+
+
+
+\colorbox{gray!10}{%
+        \begin{minipage}{1\linewidth}%
+            \vspace*{2pt}%Space before
+\textbf{Keywords:} Self-compassion scale, SCS, SCS-SF, Mindfulness, Meditation, Education, Academia, University, Mindfulness-based Stress Reduction, MBSR, Yoga
+            \vspace*{2pt}%Space after
+        \end{minipage}%
+        }
+
+
+\section*{Introduction}
+
+{\label{874460}}
+
+Self-compassion, mindfulness and related interventions, are increasingly
+receiving attention for their use in education and psychological
+settings. Self-compassion is described as a~state of ``loving, connected
+presence'' that is increasingly cited in the literature as being linked
+to positive states of mind~\hyperref[csl:5]{(Neff \& McGehee, 2010)}~and overall
+well-being~\hyperref[csl:6]{(Richards, Campenni, \& Muse-Burke, 2010)}. Mindfulness involves intentionally
+developing an equanimous awareness of one's feelings, bodily sensations,
+mental phenomena as well as external stimuli associated with the present
+moment experience. Regular mindfulness training, through practices such
+as meditation, supports the development of
+attention~\hyperref[csl:7]{(Moore, Gruber, Derose, \& Malinowski, 2012)}~and mindful appreciation of one's daily
+experience.~
+
+Though the practice has received an increase of attention in research
+settings in recent years, it has been investigated in clinical
+psychology and psychiatry settings since the 1970s (Creswell, 2017).
+Results from numerous randomized controlled trials investigating
+mindfulness show efficacy for treating a broad range of psychological
+symptoms. Mindfulness interventions, which include mindfulness-based
+stress reduction (MBSR), mindfulness-based relapse prevention (MBRP),
+and mindfulness-based cognitive therapy (MBCT) have shown significant
+positive effects on depression and depression relapse, and resemble
+results produced from antidepressant medication treatments (Creswell,
+2017). Meta-analyses and RCTs also indicate that mindfulness
+interventions produce significant positive effects for managing anxiety
+(Strauss, Cavanagh, Oliver, \& Pettman, 2014; V\selectlanguage{ngerman}øllestad, Nielsen,
+Nielsen, 2012), as well as treating addictive disorders (Creswell,
+2017).
+
+Mindfulness may offer significant utility in education settings. Young
+students often experience a myriad of new emotions and feelings as they
+progress through the school system and interact with teachers and
+classmates on a regular basis. Students in higher education settings
+typically deal with the stress of coursework requirements, as well as
+environments of excessive substance use, and the impending doom of
+student loan debt. Considering that many researchers have discussed what
+they consider to be a ``mental health crisis'' in higher education, it
+appears that innovative interventions such as mindfulness are necessary
+in education settings (Francis \& Horn, 2017).
+
+Mindfulness interventions have also shown positive effects in education
+settings. A 2014 meta-analysis of mindfulness-based interventions
+utilized in primary education settings produced a medium overall effect
+size (g = 0.40; Zenner, Herrnleben-Kurz, and Walach, 2014). The authors
+report a large effect (g = 0.80) size for studies investigating
+mindfulness interventions and cognitive performance (Zenner,
+Herrnleben-Kurz, and Walach, 2014), and small to medium effect sizes in
+several other psychological variables. Based on the results from their
+analysis, the researchers argue that ``mindfulness-based training in a
+school context has effects that are seen mostly in the cognitive domain,
+but also in psychological measures of stress, coping, and resilience''
+(Zenner, Herrnleben-Kurz, and Walach, 2014, p. 16). No systematic
+reviews or meta-analyses of mindfulness-based interventions across the
+full spectrum of higher education exists, but proxy studies suggest a
+robust evidence-basis for applying mindfulness interventions in higher
+education. A meta-analysis that investigated outcomes of mindfulness in
+a classroom setting and included a wide range of randomized controlled
+intervention trials applied in higher education found a moderate effect
+size for the subgroup of mindfulness interventions (g = 0.52; Davies,
+Morriss, and Glazebrook, 2014). Additionally, a narrative review study
+of mindfulness meditation concluded that it is a capable intervention
+for helping college students manage stress and anxiety (Bamber \&
+Schneider, 2016).
+
+The primary goal of this study is to review and analyze research results
+regarding the effect that mindfulness interventions have on
+self-compassion in education settings. The construct of self-compassion
+has advanced in recent decades with writings from Kristin Neff (2016a,
+2016b). In the simplest terminology, self-compassion is the process of
+directing compassion inwardly when dealing with difficult situations and
+experiences. Neff summarizes the concept of self-compassion well in the
+following quote; ``Instead of mercilessly judging and criticizing
+yourself for various inadequacies or shortcomings, self-compassion means
+you are kind and understanding when confronted with personal failings''
+(Neff, 2016a, p. 1). As it pertains to mindfulness, Neff argues that the
+practice is a key component of self-compassion (Neff, 2016a).
+Self-compassion requires that individuals take note of their negative
+feelings and emotions when dealing with difficult situations and viewing
+such experiences objectively and with lucidity. For us to regard our
+personal experiences with compassion, we must first be mindful of our
+pain and suffering.
+
+No systematic review or meta-analysis currently exists that examines a
+self-compassion variable in education settings; however, several studies
+indicate associations with positive outcomes. Gunnell et al. (2017)
+discovered associations between well-being and self-compassion in
+first-year college students and concluded that enhanced self-compassion
+in the first year of college mitigates declines in well-being over the
+course of their college career. Another study of 200 Pakistani
+university students found that increased self-compassion significantly
+predicts decreases in procrastination (Loona \& Khan, 2016). Finally,
+\selectlanguage{polish}Ş\selectlanguage{english}enyuva et al. (2014) discovered positive correlations between self-compassion and emotional intelligence in a sample of 571 Turkish
+nursing students. Together, these studies indicate that self-compassion
+is an important factor in education settings.
+
+A broad review of the literature has conjured two primary conclusions
+that influenced the direction of this study; (1) mindfulness-based
+interventions are capable of producing positive outcomes in education
+settings; (2) self-compassion is meaningfully associated with positive
+outcomes in education settings. Therefore, the major research questions
+for this study is as follows; what effect do mindfulness-based
+interventions applied in education settings have on the construct of
+self-compassion, and how effective are such interventions on influencing
+self-compassion?
+
+\par\null\selectlanguage{english}
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=1.00\columnwidth]{figures/mass/mass}
+\caption{{Pellentesque suscipit risus massa, non vestibulum libero euismod
+feugiat. In hac habitasse platea dictumst. Maecenas rutrum lobortis
+lobortis. Vestibulum convallis porttitor sem ac ultricies.
+{\label{931769}}%
+}}
+\end{center}
+\end{figure}
+
+\par\null
+
+Mauris nec massa leo. Mauris ac diam auctor nisl imperdiet porta. Sed
+sit amet neque eget nisi dictum placerat. Duis sit amet pellentesque
+odio. Cras scelerisque sem a consectetur vehicula. Aliquam interdum
+luctus fringilla. Nunc sollicitudin, lorem in semper viverra, dui nisi
+sodales sem, ut condimentum erat leo eget arcu. Donec pharetra aliquam
+metus, non pulvinar tellus interdum a. Mauris a ante pharetra, mollis
+enim in, eleifend erat. Pellentesque suscipit risus massa, non
+vestibulum libero euismod feugiat. In hac habitasse platea dictumst.
+Maecenas rutrum lobortis lobortis. Vestibulum convallis porttitor sem ac
+ultricies. Mauris volutpat fringilla nisl blandit semper. Proin nec
+iaculis sem. Aenean neque ipsum, pretium a faucibus non, tincidunt ut
+sapien.
+
+Nunc a aliquet sem, eget aliquet purus. Vestibulum ac placerat mauris.
+Proin sed dolor ac justo semper iaculis. Donec varius, nibh sit amet
+finibus tristique, sapien ante interdum odio, et pretium sapien libero
+nec massa. In hac habitasse platea dictumst. Donec vel augue ac sapien
+imperdiet pretium. Maecenas gravida risus id ultricies dignissim.
+Maecenas gravida felis quis dolor faucibus, sed maximus lorem tristique.
+Nam hendrerit quam quis ante porta posuere. Fusce finibus maximus orci
+at porttitor. Nulla tempor ex a porttitor consequat. Quisque quis tempor
+eros. Donec nisi mauris, sollicitudin in dapibus eu, interdum ultricies
+quam Fig {\ref{931769}}.
+
+\section*{Section}
+
+{\label{507127}}
+
+Nunc a aliquet sem, eget aliquet purus. Vestibulum ac placerat mauris.
+Proin sed dolor ac justo semper iaculis. Donec varius, nibh sit amet
+finibus tristique, sapien ante interdum odio, et pretium sapien libero
+nec massa. In hac habitasse platea dictumst. Donec vel augue ac sapien
+imperdiet pretium. Maecenas gravida risus id ultricies dignissim.
+Maecenas gravida felis quis dolor faucibus, sed maximus lorem
+tristique~\(e^{i\pi}+1=0\)
+
+\section*{Acknowledgements}
+
+{\label{687807}}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras egestas
+auctor molestie. In hac habitasse platea dictumst. Duis turpis tellus,
+scelerisque sit amet lectus ut, ultricies cursus enim. Integer fringilla
+a elit at fringilla. Lorem ipsum dolor sit amet, consectetur adipiscing
+elit. Nulla congue consequat consectetur. Duis ac mi ultricies, mollis
+ipsum nec, porta est.
+
+\selectlanguage{english}
+\clearpage
+\section*{References}\sloppy
+
+\phantomsection
+\label{csl:3}Dundas, I., Binder, P.-E., Hansen, T. G. B., \& Stige, S. H. (2017). {Does a short self-compassion intervention for students increase healthy self-regulation? {A} randomized control trial}. \textit{Scandinavian Journal of Psychology}, \textit{58}(5), 443–450. \url{https://doi.org/10.1111/sjop.12385}
+
+\phantomsection
+\label{csl:4}Gunnell, K. E., Mosewich, A. D., McEwen, C. E., Eklund, R. C., \& Crocker, P. R. E. (2017). {Don't be so hard on yourself! {Changes} in self-compassion during the first year of university are associated with changes in well-being}. \textit{Personality and Individual Differences}, \textit{107}, 43–48. \url{https://doi.org/10.1016/j.paid.2016.11.032}
+
+\phantomsection
+\label{csl:2}Martin, R. D., Kennett, D. J., \& Hopewell, N. M. (2019). {Examining the importance of academic-specific self-compassion in the academic self-control model}. \textit{The Journal of Social Psychology}, 1–16. \url{https://doi.org/10.1080/00224545.2018.1555128}
+
+\phantomsection
+\label{csl:7}Moore, A., Gruber, T., Derose, J., \& Malinowski, P. (2012). {Regular, brief mindfulness meditation practice improves electrophysiological markers of attentional control}. \textit{Frontiers in Human Neuroscience}, \textit{6}. \url{https://doi.org/10.3389/fnhum.2012.00018}
+
+\phantomsection
+\label{csl:5}Neff, K. D., \& McGehee, P. (2010). {Self-compassion and Psychological Resilience Among Adolescents and Young Adults}. \textit{Self and Identity}, \textit{9}(3), 225–240. \url{https://doi.org/10.1080/15298860902979307}
+
+\phantomsection
+\label{csl:1}Neff, K. D., Whittaker, T. A., \& Karl, A. (2017). {Examining the {Factor} {Structure} of the {Self}-{Compassion} {Scale} in {Four} {Distinct} {Populations}: {Is} the {Use} of a {Total} {Scale} {Score} {Justified}?}. \textit{Journal of Personality Assessment}, \textit{99}(6), 596–607. \url{https://doi.org/10.1080/00223891.2016.1269334}
+
+\phantomsection
+\label{csl:6}Richards, K., Campenni, C., \& Muse-Burke, J. (2010). {Self-care and Well-being in Mental Health Professionals: The Mediating Effects of Self-awareness and Mindfulness}. \textit{Journal of Mental Health Counseling}, \textit{32}(3), 247–264. \url{https://doi.org/10.17744/mehc.32.3.0n31v88304423806}
+
+
+\end{document}
+
