@@ -9,11 +9,7 @@ header-includes:
 - \usepackage{booktabs}
 - \usepackage{makecell}
 - \usepackage{amsmath}
-output: 
-  pdf_document: 
-    toc: no
-    number_sections: true
-    df_print: kable
+output: posterdown::posterdown_html
 ---
 
 ```{r setup, include=FALSE}
@@ -174,6 +170,7 @@ Expanded$CT$Smeets$N <- c(nc = 25, nt = 27)
 Expanded$CT$Smeets$d <- 1.19
 (Expanded$CT$Smeets$CI <- dCI(n1 = 25, n2 = 27, d = 1.19))
 Expanded$CT$Smeets$a <- .05
+rstudioapi::getSourceEditorContext()
 ```
 # Multilevel Models
 ## Hedges Correction
@@ -239,7 +236,7 @@ Res_tbl[ ,12:13] %>% colSums() %>% Reduce(f=`+`,x=.)
 
 
 ### Moderator Effects
-```{r 'Moderators', results = 'asis'}
+```{r 'Moderators TC', results = 'asis'}
 purrr::map2(.x = Studies$Results$CT, .y = c("General", "Moderator: Intervention Type", "Moderator: Contact Time & Individual Time", "Moderator: Duration in Weeks"), .f = function(.x, .y){
   tags$strong(.y)
   # Forest Plot
@@ -286,7 +283,7 @@ dev.off()
 ```
  
 ### Moderator Effects
-```{r 'Moderators', results = 'asis'}
+```{r 'Moderators PrePost', results = 'asis'}
 purrr::map2(.x = Studies$Results$TT, .y = c("General", "Moderator: Intervention Type", "Moderator: Contact Time & Individual Time", "Moderator: Duration in Weeks"), .f = function(.x, .y){
   tags$strong(.y)
   # Forest Plot

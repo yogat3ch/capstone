@@ -1,0 +1,8 @@
+"","Pair","Desc","N","r","sig"
+"1","Pair 1","T2SCSum & T3SCSum",53,0.637,",000"
+"2","Pair 2","T2JudgeSum & T3JudgeSum",53,0.584,",000"
+"3","Pair 3","SumT2HINT & SumT3HINT",52,0.656,",000"
+"4","Pair 4","SumT2C & SumT3C",53,0.722,",000"
+"5","Pair 5","SumT2PGIS & SumT3PGIS",53,0.61,",000"
+"6","Pair 6","SumT2STAI & SumT3STAI",53,0.728,",000"
+"7","Pair 7","SumT2MDI & SumT3MDI",53,0.477,",000"
