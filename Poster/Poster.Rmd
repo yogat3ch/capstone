@@ -41,7 +41,7 @@ if (length(new.pkgs)) {
 HDA::startPkgs(pkgs)
 ```
 ```{r 'Source', results='hide'}
-source("../Meta-Analysis.R", echo = F)
+source("Meta-Analysis.R", echo = F)
 ```
 
 # Abstract
