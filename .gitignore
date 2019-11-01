@@ -7,8 +7,9 @@
 
 # Example code in package build process
 *-Ex.R
-
-
+#Knitr folders
+/*_cache/
+/*_files/
 
 # Output files from R CMD build
 /*.tar.gz
@@ -27,15 +28,7 @@ vignettes/*.pdf
 .httr-oauth
 # Photoshop files
 *.psd
-# knitr and R markdown default cache directories
-/*_cache/
-/*_files/
-/*_files
-/*_cache
-/cache/
-# Knitr folders
-**/*_cache/
-**/*_files/
+
 
 # Temporary files created by R markdown
 *.utf8.md
