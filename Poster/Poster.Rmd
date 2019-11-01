@@ -27,16 +27,16 @@ options(scipen = 12)
 # Make reproducible
 set.seed(1)
 # Install packages
-pkgs <- c("tidyverse","htmltools","magrittr", "metafor", "HDA", "extrafont")
-new.pkgs  <- pkgs[!(pkgs %in% installed.packages()[,"Package"])]
-if (length(new.packages) & any("HDA" %in% new.pkgs)) {
-  devtools::install_github("yogat3ch/HDA")
-  new.pkgs <- new.pkgs[!new.pkgs %in% "HDA"]
-  }
-if (length(new.pkgs)) {
-  install.packages(new.pkgs)
-  .rs.restartR()
-  }
+ pkgs <- c("tidyverse","htmltools","magrittr", "metafor", "HDA", "extrafont")
+# new.pkgs  <- pkgs[!(pkgs %in% installed.packages()[,"Package"])]
+# if (length(new.pkgs) & any("HDA" %in% new.pkgs)) {
+#   devtools::install_github("yogat3ch/HDA")
+#   new.pkgs <- new.pkgs[!new.pkgs %in% "HDA"]
+#   }
+# if (length(new.pkgs)) {
+#   install.packages(new.pkgs)
+#   .rs.restartR()
+#   }
 # Load packages
 HDA::startPkgs(pkgs)
 ```
@@ -93,9 +93,10 @@ kableExtra::kable(format = "html") %>% kableExtra::kable_styling(bootstrap_optio
 
 # Results
 
-Usually you want to have a nice table displaying some important results that you have calculated. In `posterdown` this is as easy as using the `kable` table formatting you are probably use to as per typical R Markdown formatting.
+![](CTModerator Contact Time & Individual Time.pdf)
+![](CTModerator Duration in Weeks.pdf)
+![](CTModerator Intervention Type.pdf)
 
-You can reference tables like so: Table \@ref(tab:mytable). Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam placerat augue at velit tincidunt semper. Donec elementum porta posuere. Nullam interdum, odio at tincidunt feugiat, turpis nisi blandit eros, eu posuere risus felis non quam. Nam eget lorem odio. Duis et aliquet orci. Phasellus nec viverra est.
 
 
 Or with figures: Figure \@ref(fig:standard-plot), or Figure \@ref(fig:morefigs).
@@ -105,8 +106,6 @@ Or with figures: Figure \@ref(fig:standard-plot), or Figure \@ref(fig:morefigs).
 - Full length and brief mindfulness-based interventions for students in educational settings show large improvements in self-compassion as measured by the Self-Compassion scale. 
 - Interventions with less total contact time show similar effect sizes to interventions with markedly more contact time. 
 - The Self-compassion course showed the most significant effect size on the self-compassion scale.
-
-
 
 # Limitations
 
