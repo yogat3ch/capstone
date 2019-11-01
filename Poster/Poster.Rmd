@@ -60,9 +60,9 @@ Two research questions for this study are: (1) what effect do mindfulness-based 
 
 
 # Methods
-### Method for Control - Treatment Model
+![Fig.1 Prisma Diagram](PrismaDiagram.png)
 
-![](MethodCT.PNG)
+### Design for Control - Treatment Model
 ```{r 'CT Design', echo=F}
 
 CT_Table %>%
@@ -73,12 +73,10 @@ kableExtra::kable(format = "html") %>% kableExtra::kable_styling(bootstrap_optio
   kableExtra::column_spec(column = 7, border_right = T) %>% 
   kableExtra::column_spec(column = 8, border_right = T) %>% 
   kableExtra::column_spec(column = 13, bold = T) %>%
-  kableExtra::row_spec(row = 0, font_size = 16)
+  kableExtra::row_spec(row = 0, font_size = 14)
 ```
 
-### Method for Pre/Post Treatment Model
-
-![](MethodTT.PNG)
+### Design for Pre/Post Treatment Model
 ```{r 'TT Design', echo=F}
 TT_Table %>%
   dplyr::select(- `Inperson/Online`) %>% 
@@ -88,7 +86,7 @@ kableExtra::kable(format = "html") %>% kableExtra::kable_styling(bootstrap_optio
   kableExtra::column_spec(column = 7, border_right = T) %>% 
   kableExtra::column_spec(column = 8, border_right = T) %>% 
   kableExtra::column_spec(column = 13, bold = T) %>%
-  kableExtra::row_spec(row = 0, font_size = 16)
+  kableExtra::row_spec(row = 0, font_size = 14)
 ```
 <!-- <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vS962Ys563I18H36KQWR2lg7l2wQbkh8Bkt-Ib0ler7ABdyIjA7wH8qgjSYj-SCE0Sn2wcm_HBEsgQY/pubhtml?gid=2047158368&amp;single=true&amp;widget=false&amp;chrome=false&amp;headers=false&amp;range=A1:N5" width="100%" height = "300px"></iframe> -->
 
@@ -113,7 +111,7 @@ Or with figures: Figure \@ref(fig:standard-plot), or Figure \@ref(fig:morefigs).
 # Limitations
 
 - Small number of studies (N = 239)
-- Self-report and no objective/phisiological measures of stress
+- Self-report and no objective/physiological measures of stress
 
 # Next Steps 
 - Future studies might examine qualitative as well as quantitative outcome measures more relevant to the educational setting. Outcome measures might be a quantifiable metric of distractibility, or it’s opposite: focused attention, prosociality, classroom performance, empathy, compassion (for others), or altruism.
