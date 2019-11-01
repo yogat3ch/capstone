@@ -92,10 +92,18 @@ kableExtra::kable(format = "html") %>% kableExtra::kable_styling(bootstrap_optio
 
 
 # Results
+## Control-Treatment
 
-![](CTModerator Contact Time & Individual Time.pdf)
-![](CTModerator Duration in Weeks.pdf)
-![](CTModerator Intervention Type.pdf)
+```{r 'CT Plots'}
+.pngs <- c("CTMod Contact Time & Individual Time.pdf", "CTMod Duration in Weeks.pdf", "CTMod Intervention Type.pdf") %>% 
+purrr::map_chr(~ {
+  .png <- pdftools::pdf_convert(.x, format = "png", pages = 1, filenames = NULL,
+dpi = 300, antialias = TRUE, opw = "", upw = "", verbose = F)
+  return(.png)
+})
+knitr::include_graphics(.pngs)
+```
+
 
 
 

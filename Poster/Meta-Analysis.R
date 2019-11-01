@@ -309,17 +309,18 @@ CT_Table[ ,12:13] %>% colSums() %>% Reduce(f=`+`,x=.)
 
 
 ## ----'Moderators CT', results = 'asis'-----------------------------------
-purrr::map2(.x = Studies$Results$CT, .y = c("General", "Moderator: Intervention Type", "Moderator: Contact Time & Individual Time", "Moderator: Duration in Weeks"), .f = function(.x, .y){
+purrr::map2(.x = Studies$Results$CT[1:4], .y = c("General", "Mod: Intervention Type", "Mod: Contact Time & Individual Time", "Mod: Duration in Weeks"), .f = function(.x, .y){
   tags$strong(.y)
   # Forest Plot
-  if(!is.null(.x[["order"]])) o <- .x[["order"]] else  o <- "obs"
-  #grDevices::pdf(paste0(gsub("\\:","",.y) %>% gsub("^","CT",.),".pdf"), family="Merriweather", width=16/2, height=9/2)
-.out <- metafor::forest(.x,order = o, steps = 5, mlab = "Hunter-Schmidt RE Estimator", main = "Control-Treatment Hunter-Schmidt Random Effects Model")
+  if (is.null(.x[["order"]])) o <- "obs" else o <- .x[["order"]] 
+grDevices::pdf(paste0(gsub("\\:","",.y) %>% gsub("^","CT",.),".pdf"), family="Merriweather", width=16/2, height=9/2)
+metafor::forest(.x, order = o, mlab = "Hunter-Schmidt RE Estimator", refline = mean(.x$yi))
+grid::grid.text(.y, .5, .9, gp=grid::gpar(cex=2))
 dev.off()
   # Table
   .x %>% capture.output %>% gsub("$", " \n", .) %>% cat %>% kableExtra::kable("latex",booktabs = T) %>% kableExtra::kable_styling(position = "center")
   as.data.frame(.x$beta) %>% cbind(.x$se, .x$zval, .x$pval %>% HDA::p.txt(), .x$ci.lb, .x$ci.ub) %>% rownames_to_column() %>% setNames(c("Moderator", "Beta", "St.Err", "Z Value","P Value", "CI lower", "CI upper")) %>%  mutate_at(vars(c(-1,-5)), funs(round(.,3))) %>% kableExtra::kable("latex",booktabs = T) %>% kableExtra::kable_styling(position = "center")
-  return(.out)
+  
 })
 
 
@@ -357,12 +358,13 @@ dev.off()
 
 
 ## ----'Moderators PrePost', results = 'asis'------------------------------
-purrr::map2(.x = Studies$Results$TT, .y = c("General", "Moderator: Intervention Type", "Moderator: Contact Time & Individual Time", "Moderator: Duration in Weeks"), .f = function(.x, .y){
+purrr::map2(.x = Studies$Results$TT[1:4], .y = c("General", "Mod: Intervention Type", "Mod: Contact Time & Individual Time", "Mod: Duration in Weeks"), .f = function(.x, .y){
   tags$strong(.y)
   # Forest Plot
-  if(!is.null(.x[["order"]])) o <- .x[["order"]] else  o <- "obs"
-  #grDevices::pdf(paste0(gsub("\\:","",.y) %>% gsub("^","TT",.),".pdf"), family="Merriweather", width=16/2, height=9/2)
-.out <- metafor::forest(.x, order = o, steps = 5, mlab = "Fixed Effects Estimator", main = "Pre/Post Treatment Fixed Effects Model")
+  if (is.null(.x[["order"]])) o <- "obs" else o <- .x[["order"]] 
+  grDevices::pdf(paste0(gsub("\\:","",.y) %>% gsub("^","TT",.),".pdf"), family="Merriweather", width=16/2, height=9/2)
+.out <- metafor::forest(.x, order = o, mlab = "Fixed Effects Estimator", refline = mean(.x$yi))
+grid::grid.text(.y, .5, .9, gp= grid::gpar(cex=2))
 dev.off()
   # Table
   .x %>% capture.output %>% gsub("$", " \n", .) %>% cat %>% kableExtra::kable("latex",booktabs = T) %>% kableExtra::kable_styling(position = "center")
