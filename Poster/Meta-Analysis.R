@@ -303,17 +303,19 @@ Studies$Results$CT$Type <- metafor::rma(yi = sapply(Studies$CT,`[[`,"g"),sei = s
 Studies$Results$CT$Time <- metafor::rma(yi = sapply(Studies$CT,`[[`,"g"),sei = sapply(Studies$CT,`[[`,"se"),method = "HS", weighted = F,mods = paste0("~ `", rma_mods[1], "` + `",rma_mods[2],"`") %>% as.formula, data = CT_Table, slab = paste0(names(Studies$CT)," CT:", CT_Table$`Contact Time (Min)`,"m,"," IT:",CT_Table$`Ind Time (Min)`,"m")) %>% summary
 Studies$Results$CT$Time$order <- CT_Table %>% rownames_to_column() %>% arrange(CT_Table$`Contact Time (Min)`) %>% .[,"rowname", drop = T] %>% as.numeric
 # Duration (Wks) as moderator
-Studies$Results$CT$Duration <- metafor::rma(yi = sapply(Studies$CT,`[[`,"g"),sei = sapply(Studies$CT,`[[`,"se"), method = "HS", weighted = F, mods = paste0("~ `", rma_mods[3], "`") %>% as.formula, data = CT_Table, slab = paste(names(Studies$CT), CT_Table$`Duration (Wks)`,"Wks",sep = ","))
+Studies$Results$CT$Duration <- metafor::rma(yi = sapply(Studies$CT,`[[`,"g"),sei = sapply(Studies$CT,`[[`,"se"), method = "HS", weighted = F, mods = paste0("~ `", rma_mods[3], "`") %>% as.formula, data = CT_Table, slab = paste0(names(Studies$CT), ", ",CT_Table$`Duration (Wks)`,"Wks"))
 Studies$Results$CT$Duration$order <- CT_Table %>% rownames_to_column() %>% arrange(CT_Table$`Duration (Wks)`) %>% .[,"rowname", drop = T] %>% as.numeric
 CT_Table[ ,12:13] %>% colSums() %>% Reduce(f=`+`,x=.)
 
 
 ## ----'Moderators CT', results = 'asis'-----------------------------------
 purrr::map2(.x = Studies$Results$CT[1:4], .y = c("General", "Mod: Intervention Type", "Mod: Contact Time & Individual Time", "Mod: Duration in Weeks"), .f = function(.x, .y){
-  tags$strong(.y)
   # Forest Plot
+  .fn <- paste0("git/Poster/",gsub("\\:","",.y) %>% gsub("^","CT",.),".pdf")
+  print(.fn)
   if (is.null(.x[["order"]])) o <- "obs" else o <- .x[["order"]] 
-grDevices::pdf(paste0(gsub("\\:","",.y) %>% gsub("^","CT",.),".pdf"), family="Merriweather", width=16/2, height=9/2)
+  
+grDevices::pdf(.fn, family="Merriweather", width=16/2, height=9/2)
 metafor::forest(.x, order = o, mlab = "Hunter-Schmidt RE Estimator", refline = mean(.x$yi))
 grid::grid.text(.y, .5, .9, gp=grid::gpar(cex=2))
 dev.off()
@@ -343,10 +345,10 @@ Studies$Results$TT$General <- metafor::rma(yi = sapply(Studies$TT,`[[`,"g"),sei 
 # Intervention Type as moderators
 Studies$Results$TT$Type <- metafor::rma(yi = sapply(Studies$TT,`[[`,"g"),sei = sapply(Studies$TT,`[[`,"se"), method = "FE", weighted = F, mods = ~ `Int Type`, data = TT_Table, slab = paste(names(Studies$TT), TT_Table$`Int Type`,sep = ",")) %>% summary
 # Contact & Individual Time as moderators
-Studies$Results$TT$Time <- metafor::rma(yi = sapply(Studies$TT,`[[`,"g"),sei = sapply(Studies$TT,`[[`,"se"),method = "FE", weighted = F,mods = paste0("~ `", rma_mods[1], "` + `",rma_mods[2],"`") %>% as.formula, data = TT_Table, slab = paste0(names(Studies$TT), "CT: ", TT_Table$`Contact Time (Min)`,"m,","IT: ",TT_Table$`Individual Time (Min)`,"m")) %>% summary
+Studies$Results$TT$Time <- metafor::rma(yi = sapply(Studies$TT,`[[`,"g"),sei = sapply(Studies$TT,`[[`,"se"),method = "FE", weighted = F,mods = paste0("~ `", rma_mods[1], "` + `",rma_mods[2],"`") %>% as.formula, data = TT_Table, slab = paste0(names(Studies$TT), " CT: ", TT_Table$`Contact Time (Min)`,"m,"," IT: ",TT_Table$`Ind Time (Min)`,"m")) %>% summary
 Studies$Results$TT$Time$order <- TT_Table %>% rownames_to_column() %>% arrange(TT_Table$`Contact Time (Min)`) %>% .[,"rowname", drop = T] %>% as.numeric
 # Duration (Wks) as moderator
-Studies$Results$TT$Duration <- metafor::rma(yi = sapply(Studies$TT,`[[`,"g"),sei = sapply(Studies$TT,`[[`,"se"), method = "FE", weighted = F, mods = paste0("~ `", rma_mods[3], "`") %>% as.formula, data = TT_Table, slab = paste(names(Studies$TT), TT_Table$`Duration (Wks)`,"Wks",sep = ","))
+Studies$Results$TT$Duration <- metafor::rma(yi = sapply(Studies$TT,`[[`,"g"),sei = sapply(Studies$TT,`[[`,"se"), method = "FE", weighted = F, mods = paste0("~ `", rma_mods[3], "`") %>% as.formula, data = TT_Table, slab = paste0(names(Studies$TT), ", ",TT_Table$`Duration (Wks)`,"Wks"))
 Studies$Results$TT$Duration$order <- TT_Table %>% rownames_to_column() %>% arrange(TT_Table$`Duration (Wks)`) %>% .[,"rowname", drop = T] %>% as.numeric
 TT_Table[ ,12:13] %>% colSums() %>% Reduce(f=`+`,x=.)
 
@@ -359,10 +361,11 @@ dev.off()
 
 ## ----'Moderators PrePost', results = 'asis'------------------------------
 purrr::map2(.x = Studies$Results$TT[1:4], .y = c("General", "Mod: Intervention Type", "Mod: Contact Time & Individual Time", "Mod: Duration in Weeks"), .f = function(.x, .y){
-  tags$strong(.y)
+  #tags$strong(.y)
   # Forest Plot
+  .fn <- paste0("git/Poster/",gsub("\\:","",.y) %>% gsub("^","TT",.),".pdf")
   if (is.null(.x[["order"]])) o <- "obs" else o <- .x[["order"]] 
-  grDevices::pdf(paste0(gsub("\\:","",.y) %>% gsub("^","TT",.),".pdf"), family="Merriweather", width=16/2, height=9/2)
+  grDevices::pdf(.fn, family="Merriweather", width=16/2, height=9/2)
 .out <- metafor::forest(.x, order = o, mlab = "Fixed Effects Estimator", refline = mean(.x$yi))
 grid::grid.text(.y, .5, .9, gp= grid::gpar(cex=2))
 dev.off()

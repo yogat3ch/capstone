@@ -90,20 +90,50 @@ kableExtra::kable(format = "html") %>% kableExtra::kable_styling(bootstrap_optio
 ```
 <!-- <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vS962Ys563I18H36KQWR2lg7l2wQbkh8Bkt-Ib0ler7ABdyIjA7wH8qgjSYj-SCE0Sn2wcm_HBEsgQY/pubhtml?gid=2047158368&amp;single=true&amp;widget=false&amp;chrome=false&amp;headers=false&amp;range=A1:N5" width="100%" height = "300px"></iframe> -->
 
-
+<hr style="padding:20px 0px 20px 0px"/>
 # Results
-## Control-Treatment
+
+
+<table style="width=100%">
+<tbody>
+<tr>
+<td>
+
+### Control-Treatment
+</td>
+<td>
+  
+### Pre/Post
+</td>
+</tr>
+<tr>
+<td>
 
 ```{r 'CT Plots'}
-.pngs <- c("CTMod Contact Time & Individual Time.pdf", "CTMod Duration in Weeks.pdf", "CTMod Intervention Type.pdf") %>% 
+.pngs <- c("CTMod Contact Time & Individual Time.pdf", "CTMod Duration in Weeks.pdf", "CTMod Intervention Type.pdf")  %>% 
 purrr::map_chr(~ {
-  .png <- pdftools::pdf_convert(.x, format = "png", pages = 1, filenames = NULL,
-dpi = 300, antialias = TRUE, opw = "", upw = "", verbose = F)
-  return(.png)
+  magick::image_read_pdf(.x) %>%  magick::image_scale(geometry = magick::geometry_size_pixels(width = 1336 / 2, preserve_aspect = T)) %>% {magick::image_write(., path = stringr::str_replace(.x, "\\.pdf$", ".png"))}
+  
 })
-knitr::include_graphics(.pngs)
-```
 
+knitr::include_graphics(.pngs, dpi = NA)
+```  
+</td>
+<td>
+  
+```{r 'TT Plots'}
+.pngs <- c("TTMod Contact Time & Individual Time.pdf", "TTMod Duration in Weeks.pdf", "TTMod Intervention Type.pdf")  %>% 
+purrr::map_chr(~ {
+  magick::image_read_pdf(.x) %>%  magick::image_scale(geometry = magick::geometry_size_pixels(width = 1336 / 2, preserve_aspect = T)) %>% {magick::image_write(., path = stringr::str_replace(.x, "\\.pdf$", ".png"))}
+  
+})
+
+knitr::include_graphics(.pngs, dpi = NA)
+```
+</td>
+</tr>
+</tbody>
+</table>
 
 
 
