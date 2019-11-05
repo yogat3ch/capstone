@@ -18,7 +18,6 @@ column_numbers: 3
 output: 
   posterdown::posterdown_html:
     self_contained: false
-bibliography: packages.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -50,7 +49,7 @@ source("Meta-Analysis.R", echo = F)
 
 # Abstract
 
-**Introduction:** The experience of the academic environment can be competitive, stressful, and at times overwhelming for students and faculty alike. Self-compassion, defined by Kristen Neff PhD as including self-kindness, common humanity, and mindfulness, has been associated with general resourcefulness, self-regulation, and well-being in university students, but mindfulness practices evoking self-compassion remain underutilized in academic contexts. **Methods:** This meta-analysis evaluated five studies and seeks to establish associations between the characteristics of mindfulness-based interventions in educational contexts, namely contact time, individual time (outside of the group context), type of intervention (Mindfulness-based stress reduction or Self-compassion courses) and their influence on the between-group (treatment-control) and within-group (pre-post) standardized mean differences (SMD) of scores on the Self-compassion scale. **Results:** The SMDs across four studies where treatment & control groups were evaluated, ranged from `r  paste0(round(range(Studies$Results$CT$General[["yi"]]), 2), collapse = "-")` while SMDs across three studies where pre/post treatment scores were evaluated ranged from `r Studies$Results$TT$General$yi %>% range %>% round(2) %>% paste0(collapse = "-")`, $\mu = `r mean(Studies$Results$TT$General$yi) %>% round(2)`$.  In the control/treatment design, `r purrr::imap_chr(Studies$Results$TT[2:4], ~{
+**Introduction:** The experience of the academic environment can be competitive, stressful, and at times overwhelming for students and faculty alike. Self-compassion, defined by Kristen Neff PhD as including self-kindness, common humanity, and mindfulness, has been associated with general resourcefulness, self-regulation, and well-being in university students, but mindfulness practices evoking self-compassion remain underutilized in academic contexts. **Methods:** This meta-analysis evaluated five studies and seeks to establish associations between the characteristics of mindfulness-based interventions in educational contexts, namely contact time, individual time (outside of the group context), type of intervention (Mindfulness-based stress reduction or Self-compassion courses) and their influence on the between-group (treatment-control) and within-group (pre-post) standardized mean differences (SMD) of scores on the Self-compassion Scale. **Results:** The SMDs across four studies where treatment & control groups were evaluated, ranged from `r  paste0(round(range(Studies$Results$CT$General[["yi"]]), 2), collapse = "-")` while SMDs across three studies where pre/post treatment scores were evaluated ranged from `r Studies$Results$TT$General$yi %>% range %>% round(2) %>% paste0(collapse = "-")`.  In the control/treatment design, `r purrr::imap_chr(Studies$Results$TT[2:4], ~{
   if(.y == "Type") .y <- "Intervention Type" else if (.y == "Time") .y <- "Contact Time"
   paste0(.y, " (p=", purrr::pluck(.x, "QMp") %>% round(2),")")  
 })  %>% {paste0(paste(.[1:2], collapse = ", "), " and ",.[3])}` were all significant predictors of self-compassion. In the Pre/Post treatment design  (suited for ad-hoc semester-long class cohort studies),  `r purrr::imap_chr(Studies$Results$CT[2:4], ~{
@@ -65,7 +64,7 @@ source("Meta-Analysis.R", echo = F)
 <li>What aspects of a mindfulness-based intervention exert the greatest influence on self-compassion: course duration, type, or total contact time?</li>
 </ol>
  
-- Self-compassion is a state of “loving, connected presence.” It is linked to positive states of the mind and overall well-being. Self-compassion has gained popularity in the West in part due to an alarming rise in psychological unwellness related to stress, anxiety, and depression. 
+- Self-compassion is a state of “loving, connected presence.” It is linked to positive states of mind and overall well-being. Self-compassion has gained popularity in the West in part due to an alarming rise in psychological unwellness related to stress, anxiety, and depression. 
 - According to the APA, 41.6% to 63% of college students report anxiety, 36.4% depression, and 35.8% relational difficulties (APA, 2013).
 - College students have a unique set of stressors: moving out of their home and no longer living with family, limited social support, many career choices, increased ambitions, competition, coursework demands, unhealthy ways of coping with stress including substance use and sex, and often looming student loan debt.
 - In higher educational settings, failings are unavoidable, since learning itself presents a series of trial, error, growth, experimentation, testing boundaries, and putting oneself in uncomfortable situations. One can argue that self-regulation in a form of being able to pick yourself up, kindly and with understanding, as a useful prevention tool for short- and long-term physical and mental wellness. 
@@ -79,38 +78,33 @@ source("Meta-Analysis.R", echo = F)
 
 CT_Table %>%
   dplyr::select(- `Inperson/Online`) %>% 
-kableExtra::kable(format = "html") %>% kableExtra::kable_styling(bootstrap_options = "striped", full_width = T, position = "center", font_size = 14) %>%
+kableExtra::kable(format = "html") %>% kableExtra::kable_styling(bootstrap_options = "striped", full_width = T, position = "center", font_size = 13) %>%
   kableExtra::column_spec(column = c(5), border_left = T, border_right = F) %>% 
   kableExtra::column_spec(column = 6, border_right = T) %>% 
   kableExtra::column_spec(column = 7, border_right = T) %>% 
   kableExtra::column_spec(column = 8, border_right = T) %>% 
   kableExtra::column_spec(column = 13, bold = T) %>%
-  kableExtra::row_spec(row = 0, font_size = 16)
+  kableExtra::row_spec(row = 0, font_size = 15)
 ```
 
 ### Design for Pre/Post Treatment Model
 ```{r 'TT Design', echo=F}
 TT_Table %>%
   dplyr::select(- `Inperson/Online`) %>% 
-kableExtra::kable(format = "html") %>% kableExtra::kable_styling(bootstrap_options = "striped", full_width = T, position = "center", font_size = 14) %>%
+kableExtra::kable(format = "html") %>% kableExtra::kable_styling(bootstrap_options = "striped", full_width = T, position = "center", font_size = 13) %>%
   kableExtra::column_spec(column = c(5), border_left = T, border_right = F) %>% 
   kableExtra::column_spec(column = 6, border_right = T) %>% 
   kableExtra::column_spec(column = 7, border_right = T) %>% 
   kableExtra::column_spec(column = 8, border_right = T) %>% 
   kableExtra::column_spec(column = 13, bold = T) %>%
-  kableExtra::row_spec(row = 0, font_size = 16)
+  kableExtra::row_spec(row = 0, font_size = 15)
 ```
-<!-- <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vS962Ys563I18H36KQWR2lg7l2wQbkh8Bkt-Ib0ler7ABdyIjA7wH8qgjSYj-SCE0Sn2wcm_HBEsgQY/pubhtml?gid=2047158368&amp;single=true&amp;widget=false&amp;chrome=false&amp;headers=false&amp;range=A1:N5" width="100%" height = "300px"></iframe> -->
-
 
 # Results
-
-
 <table style="width=100%">
 <tbody>
 <tr>
 <td>
-
 <h3 class="text-center">Control-Treatment</h3>
 </td>
 <td>
@@ -147,21 +141,14 @@ knitr::include_graphics(.pngs, dpi = NA)
 </table>
 
 # Conclusion
-
-- Full length and brief mindfulness-based interventions for students in educational settings show large improvements in self-compassion as measured by the Self-Compassion scale. 
-- Interventions with less total contact time show similar effect sizes to interventions with markedly more contact time. 
-- The Self-compassion course showed the most significant effect size on the self-compassion scale.
+- Full length and brief mindfulness-based interventions for students in educational settings show large improvements in self-compassion as measured by the Self-compassion Scale. 
+- Interventions with less total contact time and duration show similar effect sizes to interventions with markedly more contact time and of longer duration. 
+- Inteventions modeled after the Self-compassion course showed the most significant effect size on the Self-compassion Scale.
 
 # Limitations
-
-- Small number of studies (N = 239)
-- Self-report and no objective/physiological measures of stress
+- Small number of studies (C/T: 4 Studies, N = `r Studies$CT %>% purrr::map(purrr::pluck, "N") %>% unlist %>% sum`, P/P: 3 Studies, N = `r Studies$TT %>% purrr::map(purrr::pluck, "N") %>% unlist %>% sum`)
+- Relationship between the Self-compassion construct and objective/physiological measures of stress is correlative.
 
 # Next Steps 
-- Future studies might examine qualitative as well as quantitative outcome measures more relevant to the educational setting. Outcome measures might be a quantifiable metric of distractibility, or it’s opposite: focused attention, prosociality, classroom performance, empathy, compassion (for others), or altruism.
-- Future studies need to include third-person reports of behavioral or performance measures as well as machine measurable, quantifiable outcomes in order to provide a more objective view of the outcomes participants are able to realize by participating in mindfulness-based interventions in educational settings. 
-
-# References
-```{r, include=FALSE}
-knitr::write_bib(pkgs, 'packages.bib')
-```
+- Future studies might examine comparisons between outcomes on the Self-compassion Scale and physiological biometric markers of stress, attention or distractibility. 
+- Future studies can increase the validity of evidence by including third-person reports of psychological, behavioral and performance measures to provide a more objective view of the outcomes participants are able to realize by participating in mindfulness-based interventions in educational settings. 
