@@ -4,3 +4,6 @@
 .text-center {
 	text-align: center!important;
 }
+ul {
+	padding-inline-start: 20px;
+}
