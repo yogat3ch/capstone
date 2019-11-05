@@ -298,12 +298,35 @@ Studies$CT %<>% .[sort(Studies$CT %>% names)]
 # General model - no moderators
 Studies$Results$CT$General <- metafor::rma(yi = sapply(Studies$CT,`[[`,"g"),sei = sapply(Studies$CT,`[[`,"se"), method = "HS", weighted = F, slab = names(Studies$CT), main = "Test") %>% summary
 # Intervention Type as moderators
-Studies$Results$CT$Type <- metafor::rma(yi = sapply(Studies$CT,`[[`,"g"),sei = sapply(Studies$CT,`[[`,"se"), method = "HS", weighted = F, mods = ~ `Int Type`, data = CT_Table, slab = paste(names(Studies$CT), CT_Table$`Int Type`,sep = ",")) %>% summary
+Studies$Results$CT$Type <- metafor::rma(
+  yi = sapply(Studies$CT,`[[`,"g"),
+  sei = sapply(Studies$CT,`[[`,"se"),
+  method = "HS",
+  weighted = F,
+  mods = ~ `Int Type`,
+  data = CT_Table,
+  slab = paste(names(Studies$CT), CT_Table$`Int Type`,sep = ",")) %>% summary
 # Contact & Individual Time as moderators
-Studies$Results$CT$Time <- metafor::rma(yi = sapply(Studies$CT,`[[`,"g"),sei = sapply(Studies$CT,`[[`,"se"),method = "HS", weighted = F,mods = paste0("~ `", rma_mods[1], "` + `",rma_mods[2],"`") %>% as.formula, data = CT_Table, slab = paste0(names(Studies$CT)," CT:", CT_Table$`Contact Time (Min)`,"m,"," IT:",CT_Table$`Ind Time (Min)`,"m")) %>% summary
+Studies$Results$CT$Time <- metafor::rma(
+  yi = sapply(Studies$CT,`[[`,"g"),
+  sei = sapply(Studies$CT,`[[`,"se"),
+  method = "HS",
+  weighted = F,
+  mods = paste0("~ `", rma_mods[1], "` + `",rma_mods[2],"`") %>% as.formula, 
+  data = CT_Table,
+  slab = paste0(names(Studies$CT)," CT:", CT_Table$`Contact Time (Min)`,"m,"," IT:",CT_Table$`Ind Time (Min)`,"m")) %>% summary
+
 Studies$Results$CT$Time$order <- CT_Table %>% rownames_to_column() %>% arrange(CT_Table$`Contact Time (Min)`) %>% .[,"rowname", drop = T] %>% as.numeric
 # Duration (Wks) as moderator
-Studies$Results$CT$Duration <- metafor::rma(yi = sapply(Studies$CT,`[[`,"g"),sei = sapply(Studies$CT,`[[`,"se"), method = "HS", weighted = F, mods = paste0("~ `", rma_mods[3], "`") %>% as.formula, data = CT_Table, slab = paste0(names(Studies$CT), ", ",CT_Table$`Duration (Wks)`,"Wks"))
+Studies$Results$CT$Duration <- metafor::rma(
+  yi = sapply(Studies$CT,`[[`,"g"),
+  sei = sapply(Studies$CT,`[[`,"se"),
+  method = "HS",
+  weighted = F,
+  mods = paste0("~ `", rma_mods[3], "`") %>% as.formula,
+  data = CT_Table,
+  slab = paste0(names(Studies$CT), ", ",CT_Table$`Duration (Wks)`,"Wks"))
+
 Studies$Results$CT$Duration$order <- CT_Table %>% rownames_to_column() %>% arrange(CT_Table$`Duration (Wks)`) %>% .[,"rowname", drop = T] %>% as.numeric
 CT_Table[ ,12:13] %>% colSums() %>% Reduce(f=`+`,x=.)
 
@@ -315,14 +338,14 @@ purrr::map2(.x = Studies$Results$CT[1:4], .y = c("General", "Mod: Intervention T
   print(.fn)
   if (is.null(.x[["order"]])) o <- "obs" else o <- .x[["order"]] 
   
-grDevices::pdf(.fn, family="Merriweather", width=16/2, height=9/2)
-metafor::forest(.x, order = o, mlab = "Hunter-Schmidt RE Estimator", refline = mean(.x$yi))
-grid::grid.text(.y, .5, .9, gp=grid::gpar(cex=2))
-dev.off()
+# grDevices::pdf(.fn, family="Merriweather", width=16/2, height=9/2)
+# .out <- metafor::forest(.x, order = o, mlab = "Hunter-Schmidt RE Estimator", refline = mean(.x$yi), addfit = F)
+#  grid::grid.text(.y, .5, .9, gp=grid::gpar(cex=2))
+# dev.off()
   # Table
   .x %>% capture.output %>% gsub("$", " \n", .) %>% cat %>% kableExtra::kable("latex",booktabs = T) %>% kableExtra::kable_styling(position = "center")
   as.data.frame(.x$beta) %>% cbind(.x$se, .x$zval, .x$pval %>% HDA::p.txt(), .x$ci.lb, .x$ci.ub) %>% rownames_to_column() %>% setNames(c("Moderator", "Beta", "St.Err", "Z Value","P Value", "CI lower", "CI upper")) %>%  mutate_at(vars(c(-1,-5)), funs(round(.,3))) %>% kableExtra::kable("latex",booktabs = T) %>% kableExtra::kable_styling(position = "center")
-  
+  # return(.out)
 })
 
 
@@ -365,14 +388,14 @@ purrr::map2(.x = Studies$Results$TT[1:4], .y = c("General", "Mod: Intervention T
   # Forest Plot
   .fn <- paste0("git/Poster/",gsub("\\:","",.y) %>% gsub("^","TT",.),".pdf")
   if (is.null(.x[["order"]])) o <- "obs" else o <- .x[["order"]] 
-  grDevices::pdf(.fn, family="Merriweather", width=16/2, height=9/2)
-.out <- metafor::forest(.x, order = o, mlab = "Fixed Effects Estimator", refline = mean(.x$yi))
-grid::grid.text(.y, .5, .9, gp= grid::gpar(cex=2))
-dev.off()
+#   grDevices::pdf(.fn, family="Merriweather", width=16/2, height=9/2)
+ # .out <- metafor::forest(.x, order = o, mlab = "Fixed Effects Estimator", refline = mean(.x$yi))
+ # grid::grid.text(.y, .5, .9, gp= grid::gpar(cex=2))
+# dev.off()
   # Table
   .x %>% capture.output %>% gsub("$", " \n", .) %>% cat %>% kableExtra::kable("latex",booktabs = T) %>% kableExtra::kable_styling(position = "center")
   as.data.frame(.x$beta) %>% cbind(.x$se, .x$zval, .x$pval %>% HDA::p.txt(), .x$ci.lb, .x$ci.ub) %>% rownames_to_column() %>% setNames(c("Moderator", "Beta", "St.Err", "Z Value","P Value", "CI lower", "CI upper")) %>%  mutate_at(vars(c(-1,-5)), funs(round(.,3))) %>% kableExtra::kable("html",booktabs = T) %>% kableExtra::kable_styling(position = "center")
-return(.out)
+# return(.out)
   })
 
 

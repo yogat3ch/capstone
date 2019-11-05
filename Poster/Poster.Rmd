@@ -42,22 +42,34 @@ HDA::startPkgs(pkgs)
 ```
 ```{r 'Source', results='hide'}
 source("Meta-Analysis.R", echo = F)
+
 ```
+
+<link rel="stylesheet" href="pd.css">
+
 
 # Abstract
 
-**Introduction:** The experience of the academic environment can be competitive, stressful, and at times overwhelming for students and faculty alike. Self-compassion, defined by Kristen Neff PhD as including self-kindness, common humanity, and mindfulness, has been associated with general resourcefulness, self-regulation, and well-being in university students, but mindfulness practices evoking self-compassion remain underutilized in academic contexts. **Methods:** This meta-analysis evaluated five studies and seeks to establish associations between the characteristics of mindfulness-based interventions in educational contexts, namely contact time, individual time (outside of the group context), type of intervention (Mindfulness-based stress reduction or Self-compassion courses) and their influence on the between-group (treatment-control) and within-group (pre-post) standardized mean differences (SMD) of scores on the Self-compassion scale. **Results:** The SMDs across four studies where treatment & control groups were evaluated, ranged from `r  paste0(round(range(Studies$Results$CT$General[["yi"]]), 2), collapse = "-")` while SMDs across three studies where pre/post treatment scores were evaluated ranged from `r Studies$Results$TT$General$yi %>% range %>% round(2) %>% paste0(collapse = "-")`, $\mu = `r mean(Studies$Results$TT$General$yi) %>% round(2)`$.  Intervention type, in both pre/post and treatment/control analyses showed the largest significant effect $\beta= 1.14$, $p \leq 0.1$ on self-compassion outcome measures. **Conclusion:** Two to eight-week mindfulness courses embedded within coursework can have a significant effect on self-compassion scores for student cohorts.
+**Introduction:** The experience of the academic environment can be competitive, stressful, and at times overwhelming for students and faculty alike. Self-compassion, defined by Kristen Neff PhD as including self-kindness, common humanity, and mindfulness, has been associated with general resourcefulness, self-regulation, and well-being in university students, but mindfulness practices evoking self-compassion remain underutilized in academic contexts. **Methods:** This meta-analysis evaluated five studies and seeks to establish associations between the characteristics of mindfulness-based interventions in educational contexts, namely contact time, individual time (outside of the group context), type of intervention (Mindfulness-based stress reduction or Self-compassion courses) and their influence on the between-group (treatment-control) and within-group (pre-post) standardized mean differences (SMD) of scores on the Self-compassion scale. **Results:** The SMDs across four studies where treatment & control groups were evaluated, ranged from `r  paste0(round(range(Studies$Results$CT$General[["yi"]]), 2), collapse = "-")` while SMDs across three studies where pre/post treatment scores were evaluated ranged from `r Studies$Results$TT$General$yi %>% range %>% round(2) %>% paste0(collapse = "-")`, $\mu = `r mean(Studies$Results$TT$General$yi) %>% round(2)`$.  In the control/treatment design, `r purrr::imap_chr(Studies$Results$TT[2:4], ~{
+  if(.y == "Type") .y <- "Intervention Type" else if (.y == "Time") .y <- "Contact Time"
+  paste0(.y, " (p=", purrr::pluck(.x, "QMp") %>% round(2),")")  
+})  %>% {paste0(paste(.[1:2], collapse = ", "), " and ",.[3])}` were all significant predictors of self-compassion. In the Pre/Post treatment design  (suited for ad-hoc semester-long class cohort studies),  `r purrr::imap_chr(Studies$Results$CT[2:4], ~{
+  if(.y == "Type") .y <- "Intervention Type" else if (.y == "Time") .y <- "Contact Time"
+  paste0(.y, " (p=", purrr::pluck(.x, "QMp") %>% round(3),")")  
+})  %>% {paste0(paste(.[1:2], collapse = " and "), " were significant predictors while ",.[3])}` was not. In both study designs; Intervention type, specifically interventions modeled after the Self-Compassion Course, was the most influential factor effecting self-compassion outcomes (C/T: $\beta= `r Studies$Results$CT$Type$beta[2 ,1] %>% round(2)`$ P/P: $\beta= `r Studies$Results$TT$Type$beta[2 ,1] %>% round(2)`$) on self-compassion outcome measures. **Conclusion:** Two to eight-week mindfulness courses embedded within coursework can have a significant effect on self-compassion scores for student cohorts.
 
 # Introduction
+### Research Questions
+<ol>
+<li>What effect do mindfulness-based interventions applied in education settings have on the construct of self-compassion?</li>
+<li>What aspects of a mindfulness-based intervention exert the greatest influence on self-compassion: course duration, type, or total contact time?</li>
+</ol>
+ 
 - Self-compassion is a state of “loving, connected presence.” It is linked to positive states of the mind and overall well-being. Self-compassion has gained popularity in the West in part due to an alarming rise in psychological unwellness related to stress, anxiety, and depression. 
 - According to the APA, 41.6% to 63% of college students report anxiety, 36.4% depression, and 35.8% relational difficulties (APA, 2013).
-- College students fact a unique set of stressors: moving out of their home and no longer living with the family, not having enough social support, being presented with many career choices, increased ambitions, coursework demands, unhealthy ways of coping with stress including substance use and sex, competition, and the impending doom of student loan debt.
-- College students also largely do not rely on healthy coping strategies to deal with stress. 
-- In higher educational settings, failings are unavoidable, since learning itself presents a series of trial, error, growth, experimentation, testing boundaries, and putting yourself in uncomfortable situations. One can argue that self-regulation in a form of being able to pick yourself up, kindly and with understanding, is a useful prevention tool for short- and long-term physical and mental wellness. 
+- College students have a unique set of stressors: moving out of their home and no longer living with family, limited social support, many career choices, increased ambitions, competition, coursework demands, unhealthy ways of coping with stress including substance use and sex, and often looming student loan debt.
+- In higher educational settings, failings are unavoidable, since learning itself presents a series of trial, error, growth, experimentation, testing boundaries, and putting oneself in uncomfortable situations. One can argue that self-regulation in a form of being able to pick yourself up, kindly and with understanding, as a useful prevention tool for short- and long-term physical and mental wellness. 
 - Self-compassion is associated with increased well-being in first year university students and decreased decline in well-being over the course of the college career (Gunnell et al., 2017), reduced procrastination (n = 200; Loona & Khan, 2016); and is positively correlated with emotional intelligence (n = 571; Şenyuva et al., 2014).
-
-Two research questions for this study are: (1) what effect do mindfulness-based interventions applied in education settings have on the construct of self-compassion, and (2) what is the degree of effectiveness of changing self-compassion, given interventions’ duration, type, and contact time?
-
 
 # Methods
 ![Fig.1 Prisma Diagram](PrismaDiagram.png)
@@ -67,30 +79,30 @@ Two research questions for this study are: (1) what effect do mindfulness-based 
 
 CT_Table %>%
   dplyr::select(- `Inperson/Online`) %>% 
-kableExtra::kable(format = "html") %>% kableExtra::kable_styling(bootstrap_options = "striped", full_width = T, position = "center", font_size = 12) %>%
+kableExtra::kable(format = "html") %>% kableExtra::kable_styling(bootstrap_options = "striped", full_width = T, position = "center", font_size = 14) %>%
   kableExtra::column_spec(column = c(5), border_left = T, border_right = F) %>% 
   kableExtra::column_spec(column = 6, border_right = T) %>% 
   kableExtra::column_spec(column = 7, border_right = T) %>% 
   kableExtra::column_spec(column = 8, border_right = T) %>% 
   kableExtra::column_spec(column = 13, bold = T) %>%
-  kableExtra::row_spec(row = 0, font_size = 14)
+  kableExtra::row_spec(row = 0, font_size = 16)
 ```
 
 ### Design for Pre/Post Treatment Model
 ```{r 'TT Design', echo=F}
 TT_Table %>%
   dplyr::select(- `Inperson/Online`) %>% 
-kableExtra::kable(format = "html") %>% kableExtra::kable_styling(bootstrap_options = "striped", full_width = T, position = "center", font_size = 12) %>%
+kableExtra::kable(format = "html") %>% kableExtra::kable_styling(bootstrap_options = "striped", full_width = T, position = "center", font_size = 14) %>%
   kableExtra::column_spec(column = c(5), border_left = T, border_right = F) %>% 
   kableExtra::column_spec(column = 6, border_right = T) %>% 
   kableExtra::column_spec(column = 7, border_right = T) %>% 
   kableExtra::column_spec(column = 8, border_right = T) %>% 
   kableExtra::column_spec(column = 13, bold = T) %>%
-  kableExtra::row_spec(row = 0, font_size = 14)
+  kableExtra::row_spec(row = 0, font_size = 16)
 ```
 <!-- <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vS962Ys563I18H36KQWR2lg7l2wQbkh8Bkt-Ib0ler7ABdyIjA7wH8qgjSYj-SCE0Sn2wcm_HBEsgQY/pubhtml?gid=2047158368&amp;single=true&amp;widget=false&amp;chrome=false&amp;headers=false&amp;range=A1:N5" width="100%" height = "300px"></iframe> -->
 
-<hr style="padding:20px 0px 20px 0px"/>
+
 # Results
 
 
@@ -99,11 +111,10 @@ kableExtra::kable(format = "html") %>% kableExtra::kable_styling(bootstrap_optio
 <tr>
 <td>
 
-### Control-Treatment
+<h3 class="text-center">Control-Treatment</h3>
 </td>
 <td>
-  
-### Pre/Post
+<h3 class="text-center">Pre/Post</h3>
 </td>
 </tr>
 <tr>
@@ -134,10 +145,6 @@ knitr::include_graphics(.pngs, dpi = NA)
 </tr>
 </tbody>
 </table>
-
-
-
-Or with figures: Figure \@ref(fig:standard-plot), or Figure \@ref(fig:morefigs).
 
 # Conclusion
 
